@@ -198,6 +198,7 @@ class Reimburse(APIView):
         return Response({"result":"success"},200)
 
 class Profile(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def get(self,request,format=None):
         user = User.objects.get(id=request.user)
