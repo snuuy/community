@@ -1,0 +1,26 @@
+astroid==2.1.0
+certifi==2019.3.9
+-e git+https://github.com/sopoforic/cgrr.git@eeb4cc92bda1cbe644a6e6e3c9293244bfb31ba6#egg=cgrr
+chardet==3.0.4
+colorama==0.4.1
+Django==2.1.11
+django-pyodbc-azure==2.1.0.0
+djangorestframework==3.10.2
+idna==2.8
+isort==4.3.4
+lazy-object-proxy==1.3.1
+lxml==4.3.3
+mccabe==0.6.1
+Pillow==5.4.1
+ply==3.11
+pylint==2.2.2
+pylint-django==2.0.8
+pylint-plugin-utils==0.5
+pyodbc==4.0.27
+pytz==2019.1
+requests==2.21.0
+six==1.12.0
+sqlparse==0.3.0
+stripe==2.35.1
+urllib3==1.24.2
+wrapt==1.11.0
