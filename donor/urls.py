@@ -2,6 +2,7 @@ from django.urls import path, include
 from . import views
 from rest_framework import routers
 from rest_framework.urlpatterns import format_suffix_patterns
+from django.views.decorators.csrf import csrf_exempt
 
 router = routers.DefaultRouter()
 router.register('donors', views.DonorView)
@@ -15,7 +16,7 @@ urlpatterns = [
     path('login/recipient/', views.RecipientLogin.as_view()),
     path('reimburse/', views.Reimburse.as_view()),
     path('scan/', views.ScanPurchase.as_view()),
-    path('new-purchase/', views.NewPurchase.as_view()),
+    path('new-purchase/', csrf_exempt(views.NewPurchase.as_view())),
     path('purchases/', views.GetPurchases.as_view())
 ]
 
