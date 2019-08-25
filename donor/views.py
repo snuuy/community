@@ -7,21 +7,14 @@ from django.contrib.auth import *
 from .serializers import *
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
-from braces.views import CsrfExemptMixin
 import json
 import math
 import stripe
 stripe.api_key = "sk_test_CtioXHD6KZI5skEKRchf9oQb00aNQF97IE"
 
-class CsrfExemptSessionAuthentication(SessionAuthentication):
-
-    def enforce_csrf(self, request):
-        return
-
+# Create your views here.
 
 class DonorRegistration(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         data = request.DATA
@@ -37,7 +30,6 @@ class DonorRegistration(APIView):
             new_donor.save()  
 
 class DonorLogin(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         data = request.data
@@ -65,7 +57,6 @@ class DonorLogin(APIView):
             ,200)
 
 class RecipientLogin(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         data = request.data
@@ -114,7 +105,6 @@ class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 class GetPurchases(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def get(self, request):
         
@@ -134,7 +124,6 @@ class GetPurchases(APIView):
 
 
 class NewPurchase(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request):
         store = Store.objects.get(id=request.data['storeId'])
@@ -143,7 +132,6 @@ class NewPurchase(APIView):
         return Response({"uuid":purchase.uuid},200)
 
 class ScanPurchase(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request):
         try:
@@ -160,10 +148,15 @@ class ScanPurchase(APIView):
 
 
 class Reimburse(APIView):
-    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
+<<<<<<< HEAD
     def post(self, request):
         user = User.objects.filter(id=request.user.id).first()
+=======
+    def post(self, request, format=None):
+        user = User.objects.get(id=request.user)
+        print (user)
+>>>>>>> b8864d4e8b1f30ce8f7f0f24c81542189b965fb0
         purchaseId = request.data.get('purchaseId', None)
         Pur = Purchase.objects.get(id=purchaseId)
         if user.Donor.customerId == None:
@@ -176,11 +169,17 @@ class Reimburse(APIView):
             customer = customerId
         )
         Don = Donor.objects.get(user=request.user)
+        print (Don)
         Don.total_reimbursements_made += 1
         Don.total_reimbursements_value += Pur.purchase_value
         Don.customerId = customerId
         Don.save()
+<<<<<<< HEAD
         Rec = Pur.recipient
+=======
+        print (Pur.recipient)
+        Rec = Recipient.objects.get(user=User.objects.get(username = Pur.recipient))
+>>>>>>> b8864d4e8b1f30ce8f7f0f24c81542189b965fb0
         Rec.total_reimbursements_value += Pur.purchase_value
         Rec.total_reimbursements_accepted += 1
         Rec.save()
@@ -189,6 +188,34 @@ class Reimburse(APIView):
         # Pur.donor = request.user
         Pur.save()
         return Response({"result":"success"},200)
+
+class Profile(APIView):
+    @csrf_exempt
+    def get(self,request,format=None):
+        user = User.objects.get(id=1)
+        if Recipient.objects.filter(user=user).exists() == True:
+            user_type = "Recipient"
+            type_object = Recipient.objects.get(user=user)
+            purchases = list(Purchase.objects.filter(recipient=Recipient.objects.get(user=user)))
+            purchases_JSON = map(lambda x: {
+                "id":x.id,
+                "amount":x.purchase_value,
+                "pending":x.donor == None
+            },purchases)
+            return Response({"result":"success","type":user_type,"total_reimbursements_accepted":type_object.total_reimbursements_accepted, "total_reimbursements_value":type_object.total_reimbursements_value, "purchases_list":purchases_list},200)
+        elif Donor.objects.filter(user=user).exists() == True:
+            user_type = "Donor"
+            type_object = Donor.objects.get(user=user)
+            reimbursements = list(Purchase.objects.filter(donor=Donor.objects.get(user=user)))
+            reimbursements_JSON = map(lambda x: {
+                "id":x.id,
+                "amount":x.purchase_value,
+            },reimbursements)
+            return Response({"result":"success","type":user_type,"total_reimbursements_made":type_object.total_reimbursements_made, "total_reimbursements_value":type_object.total_reimbursements_value, "reimbursements_list":reimbursements_JSON},200)
+        else:
+            return Response({"result":"failure, User is not Donor or Recipient"},500)
+        
+
 
     # Donor Registration 
     # Donor Login
