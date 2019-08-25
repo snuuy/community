@@ -149,14 +149,8 @@ class ScanPurchase(APIView):
 
 class Reimburse(APIView):
     @csrf_exempt
-<<<<<<< HEAD
     def post(self, request):
         user = User.objects.filter(id=request.user.id).first()
-=======
-    def post(self, request, format=None):
-        user = User.objects.get(id=request.user)
-        print (user)
->>>>>>> b8864d4e8b1f30ce8f7f0f24c81542189b965fb0
         purchaseId = request.data.get('purchaseId', None)
         Pur = Purchase.objects.get(id=purchaseId)
         if user.Donor.customerId == None:
@@ -174,12 +168,7 @@ class Reimburse(APIView):
         Don.total_reimbursements_value += Pur.purchase_value
         Don.customerId = customerId
         Don.save()
-<<<<<<< HEAD
         Rec = Pur.recipient
-=======
-        print (Pur.recipient)
-        Rec = Recipient.objects.get(user=User.objects.get(username = Pur.recipient))
->>>>>>> b8864d4e8b1f30ce8f7f0f24c81542189b965fb0
         Rec.total_reimbursements_value += Pur.purchase_value
         Rec.total_reimbursements_accepted += 1
         Rec.save()
