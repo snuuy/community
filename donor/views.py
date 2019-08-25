@@ -162,24 +162,25 @@ class ScanPurchase(APIView):
 class Reimburse(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
-    def post(self, request, format=None):
-        user = User.objects.get(username=request.user.username)
+    def post(self, request):
+        user = User.objects.filter(id=request.user.id).first()
         purchaseId = request.data.get('purchaseId', None)
         Pur = Purchase.objects.get(id=purchaseId)
-        if not request.user.customerId:
-            customerId = stripe.Customer.create(description="Customer "+request.user.id,source=request.data.token).id
+        if user.Donor.customerId == None:
+            customerId = stripe.Customer.create(description=request.user.id,source=request.data['token']).id
         else:
-            customerId = request.user.customerId
+            customerId = request.user.Donor.customerId
         stripe.Charge.create(
-            amount = Pur.purchase_value,
+            amount = int(Pur.purchase_value*100),
             currency = "cad",
             customer = customerId
         )
         Don = Donor.objects.get(user=request.user)
         Don.total_reimbursements_made += 1
         Don.total_reimbursements_value += Pur.purchase_value
+        Don.customerId = customerId
         Don.save()
-        Rec = Recipient.objects.get(user=Pur.recipient)
+        Rec = Pur.recipient
         Rec.total_reimbursements_value += Pur.purchase_value
         Rec.total_reimbursements_accepted += 1
         Rec.save()
