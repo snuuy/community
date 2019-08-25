@@ -14,13 +14,12 @@ import math
 import stripe
 stripe.api_key = "sk_test_CtioXHD6KZI5skEKRchf9oQb00aNQF97IE"
 
+class CsrfExemptSessionAuthentication(SessionAuthentication):
 
+    def enforce_csrf(self, request):
+        return
 
-class Object(CsrfExemptMixin, APIView):
-    authentication_classes = []
-
-    def post(self, request, format=None):
-        return Response({'received data': request.data})
+authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
 class DonorRegistration(APIView):
     @csrf_exempt
