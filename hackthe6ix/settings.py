@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'donor.disable.DisableCSRF'
 ]
 
 ROOT_URLCONF = 'hackthe6ix.urls'
