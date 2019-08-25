@@ -25,7 +25,7 @@ SECRET_KEY = 'at(e4k2$2amzp!z*er-$_wpmzyx@c-2ym!(wc$bv6klc_&r+4)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # DATABASES = {
 #     'default': {
