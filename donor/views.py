@@ -41,7 +41,7 @@ class DonorLogin(APIView):
     @csrf_exempt
     def post(self, request, format=None):
         data = request.data
-        print(request.data)
+        uid = data.get('uid')
         donor = Donor.objects.filter(uid=uid).first()
         if donor is None:
             user = User.objects.create_user(username=uid,password="na",email="na")
