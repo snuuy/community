@@ -136,7 +136,8 @@ class GetPurchases(APIView):
             "id":x.id,
             "lat":x.recipient.latitude,
             "long":x.recipient.longitude,
-            "amount":x.purchase_value
+            "amount":x.purchase_value,
+            "store":x.store.name
         },purchases)
         return Response({"purchases":purchases},200)
 
@@ -166,6 +167,19 @@ class ScanPurchase(APIView):
         except ObjectDoesNotExist:
             return Response({"success":False,"error":'Invalid barcode'},400)
 
+class AddCard(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
+    @csrf_exempt
+    def post(self,request):
+        customerId = stripe.Customer.create(description="Customer "+request.user.id,source=request.data.token).id
+        if customerId is not None:
+            donor = Donor.objects.get(user=request.user)
+            donor.customerId = customerId
+            donor.save()
+            return Response({"success":True},200)
+        else:
+            return Response({"success":False},400)
+        
 
 class Reimburse(APIView):
     authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
@@ -174,15 +188,14 @@ class Reimburse(APIView):
         user = User.objects.get(username=request.user.username)
         purchaseId = request.data.get('purchaseId', None)
         Pur = Purchase.objects.get(id=purchaseId)
-        if not request.user.customerId:
-            customerId = stripe.Customer.create(description="Customer "+request.user.id,source=request.data.token).id
+        if not request.user.Donor.customerId:
+            return Response({"success":False},400)
         else:
-            customerId = request.user.customerId
-        stripe.Charge.create(
-            amount = Pur.purchase_value,
-            currency = "cad",
-            customer = customerId
-        )
+            stripe.Charge.create(
+                amount = Pur.purchase_value,
+                currency = "cad",
+                customer = request.user.Donor.customerId
+            )
         Don = Donor.objects.get(user=request.user)
         Don.total_reimbursements_made += 1
         Don.total_reimbursements_value += Pur.purchase_value
