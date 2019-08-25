@@ -14,8 +14,8 @@ stripe.api_key = "sk_test_CtioXHD6KZI5skEKRchf9oQb00aNQF97IE"
 
 # Create your views here.
 
-@csrf_exempt
 class DonorRegistration(APIView):
+    @csrf_exempt
     def post(self, request, format=None):
         data = request.DATA
         username = data.get('username', None)
@@ -29,8 +29,8 @@ class DonorRegistration(APIView):
             new_donor = Donor(user=User.objects.get(username=username))
             new_donor.save()  
 
-@csrf_exempt
 class DonorLogin(APIView):
+    @csrf_exempt
     def post(self, request, format=None):
         data = request.data
         uid = data.get('uid')
@@ -56,8 +56,8 @@ class DonorLogin(APIView):
             }
             ,200)
 
-@csrf_exempt
 class RecipientLogin(APIView):
+    @csrf_exempt
     def post(self, request, format=None):
         data = request.data
         uid = data.get('uid')
@@ -104,8 +104,8 @@ class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-@csrf_exempt
 class GetPurchases(APIView):
+    @csrf_exempt
     def get(self, request):
         
         (latitude,longitude) = (request.query_params['lat'],request.query_params['long'])
@@ -122,16 +122,17 @@ class GetPurchases(APIView):
         },purchases)
         return Response({"purchases":purchases},200)
 
-@csrf_exempt
+
 class NewPurchase(APIView):
+    @csrf_exempt
     def post(self, request):
         store = Store.objects.get(id=request.data['storeId'])
         purchase = Purchase(purchase_value=request.data['amount'],store=store)
         purchase.save()
         return Response({"uuid":purchase.uuid},200)
 
-@csrf_exempt
 class ScanPurchase(APIView):
+    @csrf_exempt
     def post(self, request):
         try:
             purchase = Purchase.objects.get(uuid=request.data['uuid'])
@@ -145,8 +146,9 @@ class ScanPurchase(APIView):
         except ObjectDoesNotExist:
             return Response({"success":False,"error":'Invalid barcode'},400)
 
-@csrf_exempt
+
 class Reimburse(APIView):
+    @csrf_exempt
     def post(self, request, format=None):
         user = User.objects.get(username=request.user.username)
         purchaseId = request.data.get('purchaseId', None)
