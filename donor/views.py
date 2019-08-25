@@ -34,7 +34,7 @@ class DonorLogin(APIView):
         uid = data.get('uid')
         donor = Donor.objects.filter(uid=uid).first()
         if donor is None:
-            user = User(username=uid,password="na",email="na")
+            user = User.objects.create_user(username=uid,password="na",email="na")
             user.save()
             donor = Donor(uid=uid,user=user)
             donor.save()

@@ -11,7 +11,7 @@ class Donor(models.Model):
     customerId = models.CharField(max_length=50, null=True)
     uid = models.CharField(max_length=30,null=True)
     total_reimbursements_made = models.IntegerField(default=0)
-    total_reimbursements_value = models.DecimalField(default=0.0, max_digits=20, decimal_places=2)
+    total_reimbursements_value = models.DecimalField(default=0.0, max_digits=21, decimal_places=2)
 
     def __str__(self):
         return self.user.username
@@ -50,7 +50,7 @@ class Purchase(models.Model):
                             on_delete=models.SET_NULL,
                             null=True)
     purchase_value = models.DecimalField(default=0.0, max_digits=20, decimal_places=2)
-    uuid = models.CharField(max_length=64,default=uuid.uuid1())
+    uuid = models.CharField(max_length=64,default=uuid.uuid1)
     #time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
