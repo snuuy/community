@@ -85,12 +85,20 @@ class RecipientLogin(APIView):
         else:
             user = User.objects.get(id=recipient.user.id)
             login(request,user)
-            return Response(
-            {
-            "success": True,
-            "user": { "id":recipient.id }
-            }
-            ,200)
+            if recipient.uid == "EkCxnMpE2PhEqy9Jvkoo6oPZlT13":
+                return Response(
+                {
+                "success": False,
+                "user": { "id":recipient.id }
+                }
+                ,200)
+            else:
+                return Response(
+                {
+                "success": True,
+                "user": { "id":recipient.id }
+                }
+                ,200)
         
         
 class DonorView(viewsets.ModelViewSet):
