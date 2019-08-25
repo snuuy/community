@@ -7,12 +7,19 @@ from django.contrib.auth import *
 from .serializers import *
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication 
 import json
 import math
 import stripe
 stripe.api_key = "sk_test_CtioXHD6KZI5skEKRchf9oQb00aNQF97IE"
 
 # Create your views here.
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+    def enforce_csrf(self, request):
+        return
+
+authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
 class DonorRegistration(APIView):
     @csrf_exempt
