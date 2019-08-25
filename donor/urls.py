@@ -17,7 +17,7 @@ urlpatterns = [
     path('reimburse/', views.Reimburse.as_view()),
     path('scan/', views.ScanPurchase.as_view()),
     path('new-purchase/', csrf_exempt(views.NewPurchase.as_view())),
-    path('purchases/', views.GetPurchases.as_view())
+    path('purchases/', views.GetPurchases.as_view()),
     path('profile/', views.Profile.as_view())
 ]
 
