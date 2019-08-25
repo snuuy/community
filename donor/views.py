@@ -8,13 +8,11 @@ from .serializers import *
 from django.core.exceptions import ObjectDoesNotExist
 import json
 import math
-from django.views.decorators.csrf import csrf_exempt
 import stripe
 stripe.api_key = "sk_test_CtioXHD6KZI5skEKRchf9oQb00aNQF97IE"
 
 # Create your views here.
 
-@csrf_exempt
 class DonorRegistration(APIView):
     def post(self, request, format=None):
         data = request.DATA
@@ -29,14 +27,14 @@ class DonorRegistration(APIView):
             new_donor = Donor(user=User.objects.get(username=username))
             new_donor.save()  
 
-@csrf_exempt
+
 class DonorLogin(APIView):
     def post(self, request, format=None):
         data = request.data
-        uid = data['uid']
+        uid = data.get('uid')
         donor = Donor.objects.filter(uid=uid).first()
         if donor is None:
-            user = User.objects.create_user(username=uid,password="na",email="na")
+            user = User(username=uid,password="na",email="na")
             user.save()
             donor = Donor(uid=uid,user=user)
             donor.save()
@@ -56,7 +54,7 @@ class DonorLogin(APIView):
             }
             ,200)
 
-@csrf_exempt
+
 class RecipientLogin(APIView):
     def post(self, request, format=None):
         data = request.data
@@ -83,7 +81,6 @@ class RecipientLogin(APIView):
             }
             ,200)
         
-@csrf_exempt
 class DonorView(viewsets.ModelViewSet):
     queryset = Donor.objects.all()
     serializer_class = DonorSerializer
@@ -104,7 +101,6 @@ class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-@csrf_exempt
 class GetPurchases(APIView):
     def get(self, request):
         
@@ -122,7 +118,6 @@ class GetPurchases(APIView):
         },purchases)
         return Response({"purchases":purchases},200)
 
-@csrf_exempt
 class NewPurchase(APIView):
     def post(self, request):
         store = Store.objects.get(id=request.data['storeId'])
@@ -130,7 +125,6 @@ class NewPurchase(APIView):
         purchase.save()
         return Response({"uuid":purchase.uuid},200)
 
-@csrf_exempt
 class ScanPurchase(APIView):
     def post(self, request):
         try:
@@ -145,7 +139,6 @@ class ScanPurchase(APIView):
         except ObjectDoesNotExist:
             return Response({"success":False,"error":'Invalid barcode'},400)
 
-@csrf_exempt
 class Reimburse(APIView):
     def post(self, request, format=None):
         user = User.objects.get(username=request.user.username)
