@@ -19,9 +19,9 @@ class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return
 
-authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
 class DonorRegistration(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         data = request.DATA
@@ -37,6 +37,7 @@ class DonorRegistration(APIView):
             new_donor.save()  
 
 class DonorLogin(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         data = request.data
@@ -64,6 +65,7 @@ class DonorLogin(APIView):
             ,200)
 
 class RecipientLogin(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         data = request.data
@@ -112,6 +114,7 @@ class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 class GetPurchases(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def get(self, request):
         
@@ -131,6 +134,7 @@ class GetPurchases(APIView):
 
 
 class NewPurchase(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request):
         store = Store.objects.get(id=request.data['storeId'])
@@ -139,6 +143,7 @@ class NewPurchase(APIView):
         return Response({"uuid":purchase.uuid},200)
 
 class ScanPurchase(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request):
         try:
@@ -155,6 +160,7 @@ class ScanPurchase(APIView):
 
 
 class Reimburse(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     @csrf_exempt
     def post(self, request, format=None):
         user = User.objects.get(username=request.user.username)
