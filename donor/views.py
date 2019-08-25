@@ -182,17 +182,26 @@ class Reimburse(APIView):
 class Profile(APIView):
     @csrf_exempt
     def get(self,request,format=None):
-        user = User.objects.get(id=request.user)
-        if Donor.objects.get(user=user) == None:
+        user = User.objects.get(id=1)
+        if Recipient.objects.filter(user=user).exists() == True:
             user_type = "Recipient"
             type_object = Recipient.objects.get(user=user)
-            purchases_list = Purchase.objects.get(recipient=Recipient.objects.get(user=user))
-            return Response({"result":"success","type":user_type,"total_reimbursements_accepted":Recipient.total_reimbursements_accepted, "total_reimbursements_value":Recipient.total_reimbursements_value, "purchases_list":purchases_list},200)
-        elif Recipient.objects.get(user=user) == None:
+            purchases = list(Purchase.objects.filter(recipient=Recipient.objects.get(user=user)))
+            purchases_JSON = map(lambda x: {
+                "id":x.id,
+                "amount":x.purchase_value,
+                "pending":x.donor == None
+            },purchases)
+            return Response({"result":"success","type":user_type,"total_reimbursements_accepted":type_object.total_reimbursements_accepted, "total_reimbursements_value":type_object.total_reimbursements_value, "purchases_list":purchases_list},200)
+        elif Donor.objects.filter(user=user).exists() == True:
             user_type = "Donor"
             type_object = Donor.objects.get(user=user)
-            reimbursement_list = Purchase.objects.get(donor=Donor.objects.get(user=user))
-            return Response({"result":"success","type":user_type,"total_reimbursements_made":Donor.total_reimbursements_made, "total_reimbursements_value":Donor.total_reimbursements_value, "reimbursements_list":reimbursement_list},200)
+            reimbursements = list(Purchase.objects.filter(donor=Donor.objects.get(user=user)))
+            reimbursements_JSON = map(lambda x: {
+                "id":x.id,
+                "amount":x.purchase_value,
+            },reimbursements)
+            return Response({"result":"success","type":user_type,"total_reimbursements_made":type_object.total_reimbursements_made, "total_reimbursements_value":type_object.total_reimbursements_value, "reimbursements_list":reimbursements_JSON},200)
         else:
             return Response({"result":"failure, User is not Donor or Recipient"},500)
         
