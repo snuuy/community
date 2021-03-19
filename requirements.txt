@@ -3,7 +3,7 @@ certifi==2019.3.9
 -e git+https://github.com/sopoforic/cgrr.git@eeb4cc92bda1cbe644a6e6e3c9293244bfb31ba6#egg=cgrr
 chardet==3.0.4
 colorama==0.4.1
-Django==2.2.13
+Django==2.2.18
 django-braces==1.13.0
 django-pyodbc-azure==2.1.0.0
 djangorestframework==3.10.2
