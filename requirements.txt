@@ -1,5 +1,5 @@
 astroid==2.1.0
-certifi==2019.3.9
+certifi==2022.12.7
 -e git+https://github.com/sopoforic/cgrr.git@eeb4cc92bda1cbe644a6e6e3c9293244bfb31ba6#egg=cgrr
 chardet==3.0.4
 colorama==0.4.1
